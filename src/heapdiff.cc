@@ -316,13 +316,16 @@ NAN_METHOD(heapdiff::HeapDiff::End)
 
     HeapDiff *t = Unwrap<HeapDiff>( info.This() );
 
+    // IW: This actually makes sense if you want to consecutively compare against
+    // an initial heap snapshot that was made right after the program started.
+    
     // How shall we deal with double .end()ing?  The only reasonable
     // approach seems to be an exception, cause nothing else makes
     // sense.
-    if (t->ended) {
-        return Nan::ThrowError("attempt to end() a HeapDiff that was already ended");
-    }
-    t->ended = true;
+    //if (t->ended) {
+    //    return Nan::ThrowError("attempt to end() a HeapDiff that was already ended");
+    //}
+    //t->ended = true;
 
     s_inProgress = true;
 #if (NODE_MODULE_VERSION >= 0x002D)
@@ -339,8 +342,8 @@ NAN_METHOD(heapdiff::HeapDiff::End)
     v8::Local<Value> comparison = compare(t->before, t->after);
     // free early, free often.  I mean, after all, this process we're in is
     // probably having memory problems.  We want to help her.
-    ((HeapSnapshot *) t->before)->Delete();
-    t->before = NULL;
+    //((HeapSnapshot *) t->before)->Delete();
+    //t->before = NULL;
     ((HeapSnapshot *) t->after)->Delete();
     t->after = NULL;
 
